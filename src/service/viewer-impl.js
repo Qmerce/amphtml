@@ -215,10 +215,18 @@ export class Viewer {
      * a web view, or a shadow doc in PWA.
      * @private @const {boolean}
      */
-    this.isEmbedded_ = (
+    this.isEmbedded_ = !!(
+        this.isIframed_ && !this.win.AMP_TEST_IFRAME
         // Checking param "origin", as we expect all viewers to provide it.
         // See https://github.com/ampproject/amphtml/issues/4183
-        this.isIframed_ && !this.win.AMP_TEST_IFRAME && this.params_['origin']
+        // There appears to be a bug under investigation where the
+        // origin is sometimes failed to be detected. Since failure mode
+        // if we fail to initialize communication is very bad, we also check
+        // for visibilityState.
+        && (this.params_['origin']
+            || this.params_['visibilityState']
+            // Parent asked for viewer JS. We must be embedded.
+            || (this.win.location.search.indexOf('amp_js_v') != -1))
         || this.isWebviewEmbedded_
         || !ampdoc.isSingleDoc());
 
@@ -682,6 +690,12 @@ export class Viewer {
    * @private
    */
   isTrustedViewerOrigin_(urlString) {
+    // TEMPORARY HACK due to a misbehaving native app. See b/32626673
+    // In native apps all security bets are off anyway, and in browser
+    // origins never take the form that is matched here.
+    if (this.isWebviewEmbedded_ && /^www\.[.a-z]+$/.test(urlString)) {
+      return TRUSTED_VIEWER_HOSTS.some(th => th.test(urlString));
+    }
     /** @const {!Location} */
     const url = parseUrl(urlString);
     if (url.protocol != 'https:') {
