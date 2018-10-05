@@ -19,6 +19,7 @@
 .amp-apester-iframe {
   transition: 0.4s opacity;
   opacity: 0;
+  min-width: 100%;
 }
 
 .i-amphtml-apester-iframe-ready {
@@ -69,4 +70,52 @@
   top: 0;
   zoom: 1;
   -webkit-overflow-scrolling: touch !important;
+}
+
+.amp-apester-companion {
+  display: block;
+  margin: 20px auto;
+}
+
+.amp-apester-companion-placeholder {
+  background-color: lightgray;
+}
+.amp-apester-companion-placeholder::after {
+  content: 'loading...';
+}
+
+.amp-apester-companion-fallback {
+  background-color: black;
+}
+.amp-apester-companion-fallback::after {
+  content: 'No Ad';
+  color: 'white'
+}
+.amp-apester-companion-placeholder::after,
+.amp-apester-companion-fallback::after {
+  font-size: 20px;
+  line-height: 30px;
+  text-align: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(50% - 15px);
+}
+
+amp-ad div[placeholder]::after {
+  content: "loading ...";
+}
+amp-ad div[fallback]::after {
+  content: "No ad";
+  color: white;
+}
+amp-ad div[placeholder]::after,
+amp-ad div[fallback]::after {
+  font-size: 20px;
+  line-height: 30px;
+  text-align: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(50% - 15px);
 }
